@@ -12,4 +12,6 @@ add_executable(DataStructures
         Queue/src/Queue.h
         Queue/src/Queue.cpp
         BST/src/BST.h
-        BST/src/BST.h)
+        BST/src/BST.h
+        AVL/src/AVL.h
+        AVL/src/AVL.cpp)

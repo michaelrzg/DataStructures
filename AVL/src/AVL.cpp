@@ -1,4 +1,4 @@
-// This is the driver class for the AVL (self balancing tree)
+// This is the driver class for the AVL (self-balancing tree)
 // Michael Rizig
 // 2/27/24
 
@@ -15,13 +15,10 @@ int dataBuffer(string s){
 }
 int main(){
      AVL* tree = new AVL;
-     tree->insert(5,tree->root);
-     tree->insert(9,tree->root);
-     tree->insert(2,tree->root);
-     tree->insert(1,tree->root);
-     tree->insert(0,tree->root);
-     tree->insert(10,tree->root);
-     tree->insert(5,tree->root);
+     tree->insert(15,tree->root);
+     tree->insert(7,tree->root);
+     tree->insert(6,tree->root);
+     //tree->insert(5,tree->root);
     int input = 11; std::string inputBuffer;
     int data;string buffer;
     while (input != 10) {

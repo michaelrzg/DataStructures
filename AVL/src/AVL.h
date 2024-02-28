@@ -1,4 +1,4 @@
-// This class defines an AVL tree (self balancing tree)
+// This class defines an AVL tree (self-balancing tree)
 // Michael Rizig
 // 2/27/24
 
@@ -16,7 +16,7 @@ class AVL{
             left=nullptr;
             right=nullptr;
             this->data=data;
-            int balanceFactor=0;
+            balanceFactor=0;
         }
 
     };
@@ -27,9 +27,11 @@ class AVL{
     this->root= nullptr;
     }
     void insert(int data, Node* &n){
+
         Node* current = n;
         if(n== nullptr){
             n=new Node(data);
+            correctAVL(root,root);
         }
         else{
             if(n->data>data){
@@ -51,6 +53,26 @@ class AVL{
         }
         else return false;
 
+    }
+    void correctAVL(Node* &n, Node* &prev){
+        updateBalanceFactors(root);
+        if(n== nullptr){
+            return;
+        }
+        if(n->balanceFactor==2 || n->balanceFactor==-2){
+            cout<<"OUT OF BALANCE: " <<n->data<<endl;
+            if(n->left!= nullptr && n->left->balanceFactor==1){
+                rightRotation(n,prev);
+            }
+        }
+        correctAVL(n->left,n);
+        correctAVL(n->right,n);
+    }
+    void printBalanceFactor(){
+        updateBalanceFactors(root);
+        string s;
+        BalanceFactors(root, s);
+        cout<<s;
     }
     void updateBalanceFactors(Node* &n){
         if(n!=nullptr){
@@ -75,7 +97,7 @@ class AVL{
             return 0;
         }
         else if(n->right!=0){
-            return 1 + leftCount(n->right);
+            return 1 + rightCount(n->right);
         }
         return 1;
     }
@@ -146,13 +168,6 @@ class AVL{
             }
         }
     }
-    void printBalanceFactor(){
-        updateBalanceFactors(root);
-        string s="";
-        BalanceFactors(root, s);
-
-        cout<<s;
-    }
     void printTree(){
         string s="";
         printTreeP(root, s);
@@ -211,12 +226,72 @@ class AVL{
         cout <<"\b\b"<<"]"<< endl;
     }
 private:
+    void rightRotation(Node* &n, Node* &prev){
+        Node* temp;bool run=false; Node* temp1;bool run1=false; Node*temp2; Node* temp3;bool run2=false;bool run3=false;
+        if(n->left->right != nullptr){
+            run = true;
+         temp= n->left->right;
+        }
+        if(n==root){
+            if(root->right!=nullptr){
+                temp1=root->right;
+                run1 = true;
+            }
+            n->left->right = new Node(root->data);
+            root = n->left;
+        }
+        else if (prev==root && n==root->right){
+            if(n->right!=nullptr){
+                temp2=n->right;
+                run2=true;
+            }
+            int a =prev->right->data;
+            prev->right = prev->right->left;
+            prev->right->right=new Node(a);
+        }
+        else if(prev==root && n==root->left)
+        {
+            if(n->right!= nullptr){
+                temp3=n->right;
+                run3=true;
+            }
+            int a =prev->left->data;
+            prev->left = prev->left->left;
+            prev->left->right=new Node(a);
+        }
+
+        else if (prev->left == n){
+            if(n->right!= nullptr){
+                temp3=n->right;
+                run3=true;
+            }
+            int a =prev->left->data;
+            prev->left = prev->left->left;
+            prev->left->right=new Node(a);
+        }
+        else{
+            if(n->right!=nullptr){
+                temp2=n->right;
+                run2=true;
+            }
+            int a =prev->right->data;
+            prev->right = prev->right->left;
+            prev->right->right=new Node(a);
+        }
+        treeVisual();
+        if(run){recursiveReadd(temp);}
+        if(run1){ recursiveReadd(temp1);}
+        if(run2){ recursiveReadd(temp2);}
+        if(run3){ recursiveReadd(temp3);}
+
+
+    }
     void BalanceFactors(Node* &n, string &s){
          Node* current = n;
         if(current!= nullptr){
-            printTreeP(current->left,s);
+            BalanceFactors(current->left,s);
             s.append(to_string(n->balanceFactor) + ", ");
-            printTreeP(current->right,s);
+            BalanceFactors(current->right,s);
 
         }
     }
