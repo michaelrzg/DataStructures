@@ -1,3 +1,6 @@
+// AVL (self balancing binary tree) inplementation in c++
+// Michael Rizig
+
 #include <iostream>
 using namespace std;
 class LinkedList{
@@ -17,7 +20,9 @@ class LinkedList{
 
 public:
 Node* root;
-
+/// @brief insert a node into the treeS
+/// @param data value of node to be inserted into tree
+/// @return if insertion is succesful, returns true. else returns false
 bool insert(int data){
     if (root==nullptr){
         root = new Node(data,nullptr);
@@ -51,7 +56,7 @@ bool insert(int data){
             prev->left = current;
         }
     }
-    cout<<"Inserted node <" <<data << "> successfully. Current tree (inorder): "<<endl;
+    cout<<"Inserted node <" <<data << "> successfully. Parent node: " << current->parent<< ". Current tree (inorder): "<<endl;
     print_inorder();
     return true;
 }
@@ -90,8 +95,6 @@ void balance(){
         return;
     }
     cout<<"Tree is not balanced. Balance factor: "<<current_balance<<endl;
-
-    
 
 }
 
