@@ -80,6 +80,9 @@ bool print(){
     return true;
     
 }
+/// @brief search tree and return true if value exists
+/// @param data : int data value
+/// @return True if data exists in tree, else false
 bool search(int data){
     Node* current = root;
     while(current!=nullptr){
@@ -220,6 +223,8 @@ int height_helper(Node* node){
     }
     return 1+ max( height_helper(node->left), height_helper(node->right));
 }
+/// @brief right-right balancing
+/// @param n : unbalanced node
 void right_right(Node* n){
      // determine if n is a left or right node
      if (n==root){
@@ -294,7 +299,8 @@ void left_left(Node* n){
         return;
     }
 }
-
+/// @brief left right balancing
+/// @param n : unbalanced node
 void left_right(Node* n){
     //left step
     Node* temp = n->left;
