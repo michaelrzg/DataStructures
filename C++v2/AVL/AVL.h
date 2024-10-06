@@ -3,7 +3,7 @@
 
 #include <iostream>
 using namespace std;
-class LinkedList{
+class AVL{
     class Node{
         public:
             int data;
@@ -28,7 +28,7 @@ bool insert(int data){
     if (root==nullptr){
         root = new Node(data,nullptr);
         cout<<endl<<"Root is null! Created Root node and inserted data: <" << data << ">" << endl;
-        print_inorder();
+        print();
         return true;
     }
     Node* current = root;
@@ -44,7 +44,7 @@ bool insert(int data){
         }
         else if(current->data == data){
             cout<<"Node " << data << " already inserted into the tree! Aborting."<<endl;
-            print_inorder();
+            print();
             return false;
         }
     }
@@ -58,13 +58,13 @@ bool insert(int data){
         }
     }
     cout<<"Inserted node <" <<data << "> successfully. Parent node: " << current->parent->data<< ". Current tree (inorder): "<<endl;
+    print();
     balance();
-    print_inorder();
     return true;
 }
-/// @brief print the tree in order (lVR)
+/// @brief print the tree in order (LVR) and preorder(VLR)
 /// @return false if tree is empty, else true
-bool print_inorder(){
+bool print(){
     if(root == nullptr){
         cout<<"Tree is empty!"<<endl;
         return false;
@@ -79,6 +79,21 @@ bool print_inorder(){
     cout<<endl;
     return true;
     
+}
+bool search(int data){
+    Node* current = root;
+    while(current!=nullptr){
+        if(current->data == data){
+            return true;
+        }
+        else if(current->data < data){
+            current = current->right;
+        }
+        else if(current->data>data){
+            current = current->left;
+        }
+    }
+    return false;
 }
 private:
 /// @brief recursively traverse tree in inorder (LVR)
@@ -116,10 +131,20 @@ void balance(){
         // determine how the node is imbalanced 
         if(get_balance_factor(unbalanced_node) == 2){
             // node is left imbalanced, can either be left left or left right
-            if(get_balance_factor(unbalanced_node->left)==1 && get_balance_factor(unbalanced_node->left->left)==0){
+            if(unbalanced_node->left != nullptr && get_balance_factor(unbalanced_node->left)==1){
+                cout<<"2";
                 left_left(unbalanced_node);
             }
+            else{
+                cout<<"3";
+                left_right(unbalanced_node);
+            }
             
+        }
+        else{
+            if(get_balance_factor(unbalanced_node->right)==-1){
+                right_right(unbalanced_node);
+            }
         }
     }
 
@@ -131,8 +156,11 @@ void balance(){
 int get_balance_factor(Node* node){
     if (node == nullptr){
         cout<<"Node does not exist"<<endl;
+        return 0;
     }
-    return height(node->left) - height(node->right);
+    else{
+        return height(node->left) - height(node->right);
+    }
 }
 
 /// @brief finds and returns the first unbalanced node found in the avl
@@ -177,6 +205,9 @@ Node* find_unbalanced_helper(Node* node){
 /// @brief returns height of a given node
 /// @return int height of longest subtree of node
 int height(Node* node){
+    if(node==nullptr){
+        return 0;
+    }
    return height_helper(node);
 }
 
@@ -189,22 +220,93 @@ int height_helper(Node* node){
     }
     return 1+ max( height_helper(node->left), height_helper(node->right));
 }
+void right_right(Node* n){
+     // determine if n is a left or right node
+     if (n==root){
+        root = root->right;
+        root->parent= nullptr;
+        if(root->left == nullptr){
+            
+            root->left = new Node(n->data,root);
+        }
+        else{
+            insert(n->data);
+        }
+     }
+    else if(n->data < n->parent->data){ 
+        // node is a left node
+        n->parent->left = n->right;
+        if(n->parent->left->right == nullptr){
+            n->parent->left->right = new Node(n->data,n->parent->left);
+        }
+        else{
+            insert(n->data);
+        }
+        return;
+    }
+    else{
+        n->parent->right = n->right;
+        if(n->parent->right->right == nullptr){
+            n->parent->right->right = new Node(n->data,n->parent->right);
+        }
+        else{
+            insert(n->data);
+        }
+        return;
+    }
+}
+
 /// @brief left-left correction for unbalanced node with -2 , -1 on n->left and -1 on n->left->left
 /// @param n 
 void left_left(Node* n){
+
+     if (n==root){
+        root = root->left;
+        root->parent= nullptr;
+        if(root->right == nullptr){
+            root->right = new Node(n->data,root);
+        }
+        else{
+            insert(n->data);
+        }
+     }
+
     // determine if n is a left or right node
-    if(n->data < n->parent->data){ 
+    else if(n->data < n->parent->data){ 
         // node is a left node
         n->parent->left = n->left;
-        n->parent->left->right = new Node(n->data,n->parent);
+        if(n->parent->left->right == nullptr){
+            n->parent->left->right = new Node(n->data,n->parent);
+        }
+        else{
+            insert(n->data);
+        }
         return;
     }
     else{
         n->parent->right = n->left;
-        n->parent->right->right = new Node(n->data,n->parent);
+        if(n->parent->right->right == nullptr){
+            n->parent->right->right = new Node(n->data,n->parent);
+        }
+        else{
+            insert(n->data);
+        }
         return;
     }
 }
+
+void left_right(Node* n){
+    //left step
+    Node* temp = n->left;
+    n->left = n->left->right;
+    if(n->left->left == nullptr){
+        n->left->left = temp;
+        temp->parent = n->left;
+    }
+    // finish with left_left
+    left_left(n);  
+}
+
 
 };
 
